@@ -21,7 +21,9 @@ cursor.execute(
     apply_unmber TEXT,
     salary TEXT,
     number_employees TEXT,
-    job_update_time TEXT
+    job_update_time TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 """
 )
@@ -145,7 +147,7 @@ if __name__ == "__main__":
                 print(job_update_time)
 
             cursor.execute(
-                "SELECT company_name, job_position FROM jobs WHERE company_name = ? AND job_position = ?",
+                "SELECT id, company_name, job_position FROM jobs WHERE company_name = ? AND job_position = ?",
                 (company_name, job_position),
             )
 
@@ -182,6 +184,16 @@ if __name__ == "__main__":
                         job_update_time,
                     ),
                 )
+            else:
+                if len(result) > 0:
+                    cursor.execute(
+                        """
+                        UPDATE jobs
+                        SET updated_at = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                        """,
+                        (str(result[0]),),
+                    )
 
             conn.commit()
 
